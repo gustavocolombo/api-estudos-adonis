@@ -5,8 +5,28 @@ export default class UsersController {
   public async store({ request, response }: HttpContextContract) {
     const { name, email } = request.body()
 
-    const user = await User.create({ name, email })
+    const user = await (await User.create({ name, email })).save()
 
     return response.status(201).json(user)
+  }
+
+  public async update({ request, response }: HttpContextContract) {
+    const { email, newName, newEmail } = request.body()
+
+    const user = await User.findByOrFail('email', email)
+
+    const updatedUser = await user.merge({ email: newEmail, name: newName }).save()
+
+    return response.status(200).json(updatedUser)
+  }
+
+  public async destroy({ request, response }: HttpContextContract) {
+    const { id } = request.params()
+
+    const user = await User.findOrFail(id)
+
+    const destroyedUser = await user.delete()
+
+    return response.status(200).json(destroyedUser)
   }
 }
