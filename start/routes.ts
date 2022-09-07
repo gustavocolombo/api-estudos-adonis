@@ -23,4 +23,13 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.group(() => {
   Route.resource('/users', 'UsersController')
   Route.resource('/posts', 'PostsController')
+
+  Route.post('login', async ({ auth, request }) => {
+    const email = request.input('email')
+    const password = request.input('password')
+
+    const token = await auth.use('api').attempt(email, password)
+
+    return token
+  })
 }).prefix('/api')

@@ -3,9 +3,14 @@ import User from '../../Models/User'
 
 export default class UsersController {
   public async store({ request, response }: HttpContextContract) {
-    const { name, email } = request.body()
+    const { name, email, password, remember_me_token } = request.only([
+      'name',
+      'email',
+      'password',
+      'remember_me_token',
+    ])
 
-    const user = await (await User.create({ name, email })).save()
+    const user = await (await User.create({ name, email, password, remember_me_token })).save()
 
     return response.status(201).json(user)
   }
